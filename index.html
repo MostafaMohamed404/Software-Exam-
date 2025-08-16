@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Development Exam Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color) !important;
+            font-size: 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .btn-section {
+            background: linear-gradient(45deg, var(--secondary-color), #5dade2);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+            color: white;
+        }
+
+        .btn-final-exam {
+            background: linear-gradient(45deg, var(--accent-color), #ff6b6b);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-final-exam:hover {
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .question-number {
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: var(--secondary-color);
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--secondary-color);
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--accent-color);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .option-letter {
+            background: var(--secondary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .progress-container {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .timer {
+            background: var(--warning-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .score-display {
+            background: linear-gradient(45deg, var(--success-color), #58d68d);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            margin: 20px 0;
+        }
+
+        .translate-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .translate-btn:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .home-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .home-icon:hover {
+            background: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .section-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .section-card {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .question-card {
+                padding: 20px;
+            }
+            
+            .btn-section {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-code me-2"></i>
+                Software Development Exam
+            </a>
+        </div>
+    </nav>
+
+    <button class="home-icon" onclick="goHome()" style="display: none;">
+        <i class="fas fa-home"></i>
+    </button>
+
+    <div class="container mt-5 pt-4">
+        <!-- Home Page -->
+        <div id="home-page" class="fade-in">
+            <div class="section-card text-center">
+                <h1 class="section-title">
+                    <i class="fas fa-laptop-code me-3"></i>
+                    Software Development Exam Platform
+                </h1>
+                <p class="lead mb-4">Master your programming skills with comprehensive practice tests</p>
+                
+                <div class="section-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">280+</div>
+                        <div class="stat-label">Total Questions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">7</div>
+                        <div class="stat-label">Practice Sections</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">35</div>
+                        <div class="stat-label">Final Exam Questions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">30</div>
+                        <div class="stat-label">Minutes Time Limit</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Sections -->
+            <div class="section-card">
+                <h2 class="section-title">Practice Sections</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-section w-100" onclick="startSection('c-programming')">
+                            <i class="fas fa-code me-2"></i>C Programming (40 Questions)
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-section w-100" onclick="startSection('pseudocode')">
+                            <i class="fas fa-file-code me-2"></i>Pseudocode (40 Questions)
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-section w-100" onclick="startSection('sql')">
+                            <i class="fas fa-database me-2"></i>SQL Database (40 Questions)
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-section w-100" onclick="startSection('algorithms')">
+                            <i class="fas fa-project-diagram me-2"></i>Algorithms (40 Questions)
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-section w-100" onclick="startSection('flowchart')">
+                            <i class="fas fa-sitemap me-2"></i>Flowchart (40 Questions)
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-section w-100" onclick="startSection('oop')">
+                            <i class="fas fa-cube me-2"></i>OOP C++ (40 Questions)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Exam -->
+            <div class="section-card text-center">
+                <h2 class="section-title">Final Comprehensive Exam</h2>
+                <p class="mb-4">Test your knowledge with a complete exam covering all topics</p>
+                <button class="btn btn-section btn-final-exam btn-lg" onclick="startFinalExam()">
+                    <i class="fas fa-graduation-cap me-2"></i>Start Final Exam (35 Questions - 30 Minutes)
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="quiz-container">
+            <div class="section-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 id="quiz-title" class="section-title mb-0"></h2>
+                    <div class="timer" id="timer" style="display: none;">
+                        <i class="fas fa-clock me-2"></i><span id="time-left">30:00</span>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-4">
+                    <span>Question <span id="current-question">1</span> of <span id="total-questions">40</span></span>
+                    <span>Score: <span id="current-score">0</span></span>
+                </div>
+                
+                <div id="question-container"></div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-outline-secondary" id="prev-btn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-chevron-left me-2"></i>Previous
+                    </button>
+                    <button class="btn btn-section" id="next-btn" onclick="nextQuestion()">
+                        Next<i class="fas fa-chevron-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results-container" style="display: none;">
+            <div class="section-card text-center">
+                <h2 class="section-title">Exam Results</h2>
+                <div class="score-display" id="final-score"></div>
+                <div id="results-details"></div>
+                <button class="btn btn-section btn-lg mt-4" onclick="goHome()">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Quiz Data
+        const quizData = {
+            'c-programming': {
+                title: 'C Programming Basics',
+                questions: [
+                    {
+                        question: 'What will be the output of the following code?',
+                        code: `int x = 5;
+printf("%d", x++);`,
+                        options: ['A) 6', 'B) 5', 'C) Error', 'D) Undefined'],
+                        correct: 1,
+                        arabic: 'ما هو ناتج الكود التالي؟'
+                    },
+                    {
+                        question: 'Which of the following is a correct for loop syntax in C?',
+                        options: ['A) for(int i=0; i<5; i++) { }', 'B) for i=0 to 5 { }', 'C) for(i=0; i<5; i+1) { }', 'D) for(i=0; i<5) { }'],
+                        correct: 0,
+                        arabic: 'أي من التالي هو تركيب صحيح لحلقة for في C؟'
+                    },
+                    {
+                        question: 'Which data type is used to store decimal numbers in C?',
+                        options: ['A) int', 'B) float', 'C) char', 'D) bool'],
+                        correct: 1,
+                        arabic: 'أي نوع بيانات يُستخدم لتخزين الأرقام العشرية في C؟'
+                    },
+                    {
+                        question: 'What is the correct syntax to declare a character variable in C?',
+                        options: ['A) char c;', 'B) character c;', 'C) string c;', 'D) char = c;'],
+                        correct: 0,
+                        arabic: 'ما هو التركيب الصحيح لإعلان متغير من نوع character في C؟'
+                    },
+                    {
+                        question: 'What will be the output of:',
+                        code: `int a = 3, b = 4;
+printf("%d", a * b);`,
+                        options: ['A) 7', 'B) 12', 'C) 34', 'D) Error'],
+                        correct: 1,
+                        arabic: 'ما هو ناتج الكود التالي؟'
+                    },
+                    {
+                        question: 'Which loop is guaranteed to execute at least once?',
+                        options: ['A) for', 'B) while', 'C) do-while', 'D) None'],
+                        correct: 2,
+                        arabic: 'أي حلقة مضمونة التنفيذ مرة واحدة على الأقل؟'
+                    },
+                    {
+                        question: 'What will be the output?',
+                        code: `int a = 10;
+if(a > 5)
+    printf("Yes");
+else
+    printf("No");`,
+                        options: ['A) Yes', 'B) No', 'C) Error', 'D) None'],
+                        correct: 0,
+                        arabic: 'ما هو ناتج الكود التالي؟'
+                    },
+                    {
+                        question: 'Which operator is used to compare two values in C?',
+                        options: ['A) =', 'B) ==', 'C) !=', 'D) <>'],
+                        correct: 1,
+                        arabic: 'أي عامل يُستخدم لمقارنة قيمتين في C؟'
+                    },
+                    {
+                        question: 'What will the following code print?',
+                        code: `int x = 0;
+while(x < 3) {
+    printf("%d ", x);
+    x++;
+}`,
+                        options: ['A) 0 1 2', 'B) 1 2 3', 'C) 0 1 2 3', 'D) Infinite loop'],
+                        correct: 0,
+                        arabic: 'ما الذي سيطبعه الكود التالي؟'
+                    },
+                    {
+                        question: 'Which of the following is NOT a loop in C?',
+                        options: ['A) for', 'B) while', 'C) repeat', 'D) do-while'],
+                        correct: 2,
+                        arabic: 'أي من التالي ليس حلقة في C؟'
+                    },
+                    {
+                        question: 'What will this code print?',
+                        code: `int i;
+for(i = 1; i <= 3; i++) {
+    printf("%d ", i);
+}`,
+                        options: ['A) 1 2 3', 'B) 0 1 2', 'C) 1 2 3 4', 'D) 0 1 2 3'],
+                        correct: 0,
+                        arabic: 'ما الذي سيطبعه هذا الكود؟'
+                    },
+                    {
+                        question: 'Which of the following is a valid variable name in C?',
+                        options: ['A) 2value', 'B) _value', 'C) value!', 'D) value-name'],
+                        correct: 1,
+                        arabic: 'أي من التالي هو اسم متغير صالح في C؟'
+                    },
+                    {
+                        question: 'What will be the output of:',
+                        code: `int a = 5;
+printf("%d", ++a);`,
+                        options: ['A) 4', 'B) 5', 'C) 6', 'D) Error'],
+                        correct: 2,
+                        arabic: 'ما هو ناتج الكود التالي؟'
+                    },
+                    {
+                        question: 'Which format specifier is used for float in printf?',
+                        options: ['A) %d', 'B) %f', 'C) %c', 'D) %lf'],
+                        correct: 1,
+                        arabic: 'أي محدد تنسيق يُستخدم لـ float في printf؟'
+                    },
+                    {
+                        question: 'Which is the smallest data type in C?',
+                        options: ['A) int', 'B) char', 'C) float', 'D) double'],
+                        correct: 1,
+                        arabic: 'ما هو أصغر نوع بيانات في C؟'
+                    },
+                    {
+                        question: 'Which of these is a logical operator in C?',
+                        options: ['A) &&', 'B) &', 'C) ||', 'D) Both A and C'],
+                        correct: 3,
+                        arabic: 'أي من هؤلاء عامل منطقي في C؟'
+                    },
+                    {
+                        question: 'What will this code output?',
+                        code: `int a = 5, b = 2;
+printf("%d", a / b);`,
+                        options: ['A) 2.5', 'B) 2', 'C) 3', 'D) Error'],
+                        correct: 1,
+                        arabic: 'ما الذي سيخرج هذا الكود؟'
+                    },
+                    {
+                        question: 'What is the correct way to write a comment in C?',
+                        options: ['A) // This is a comment', 'B) /* This is a comment */', 'C) Both A and B', 'D) # This is a comment'],
+                        correct: 2,
+                        arabic: 'ما هي الطريقة الصحيحة لكتابة تعليق في C؟'
+                    },
+                    {
+                        question: 'Which keyword is used to exit from a loop in C?',
+                        options: ['A) stop', 'B) quit', 'C) break', 'D) exit'],
+                        correct: 2,
+                        arabic: 'أي كلمة مفتاحية تُستخدم للخروج من الحلقة في C؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `int x = 10;
+if(x == 10) {
+    printf("Equal");
+} else {
+    printf("Not Equal");
+}`,
+                        options: ['A) Equal', 'B) Not Equal', 'C) Error', 'D) None'],
+                        correct: 0,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    // Additional C Programming Questions
+                    {
+                        question: 'What is the size of int data type in a 32-bit system?',
+                        options: ['A) 2 bytes', 'B) 4 bytes', 'C) 8 bytes', 'D) 1 byte'],
+                        correct: 1,
+                        arabic: 'ما هو حجم نوع البيانات int في نظام 32 بت؟'
+                    },
+                    {
+                        question: 'Which header file is required for printf function?',
+                        options: ['A) <iostream>', 'B) <stdio.h>', 'C) <stdlib.h>', 'D) <string.h>'],
+                        correct: 1,
+                        arabic: 'أي ملف رأس مطلوب لدالة printf؟'
+                    },
+                    {
+                        question: 'What will be the output?',
+                        code: `int arr[5] = {1, 2, 3};
+printf("%d", arr[4]);`,
+                        options: ['A) 3', 'B) 0', 'C) Garbage value', 'D) Error'],
+                        correct: 1,
+                        arabic: 'ما هو الناتج؟'
+                    },
+                    {
+                        question: 'Which is the correct syntax for pointer declaration?',
+                        options: ['A) int *ptr;', 'B) int ptr*;', 'C) *int ptr;', 'D) ptr *int;'],
+                        correct: 0,
+                        arabic: 'ما هو التركيب الصحيح لإعلان المؤشر؟'
+                    },
+                    {
+                        question: 'What does the & operator do?',
+                        options: ['A) Logical AND', 'B) Address of operator', 'C) Bitwise AND', 'D) Reference'],
+                        correct: 1,
+                        arabic: 'ماذا يفعل العامل &؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `int x = 5;
+int *p = &x;
+printf("%d", *p);`,
+                        options: ['A) Address of x', 'B) 5', 'C) Error', 'D) Undefined'],
+                        correct: 1,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which function is used to allocate memory dynamically?',
+                        options: ['A) alloc()', 'B) malloc()', 'C) memory()', 'D) new()'],
+                        correct: 1,
+                        arabic: 'أي دالة تُستخدم لتخصيص الذاكرة ديناميكياً؟'
+                    },
+                    {
+                        question: 'What is the correct syntax for string declaration?',
+                        options: ['A) string str;', 'B) char str[];', 'C) char *str;', 'D) Both B and C'],
+                        correct: 3,
+                        arabic: 'ما هو التركيب الصحيح لإعلان السلسلة النصية؟'
+                    },
+                    {
+                        question: 'What will be the output?',
+                        code: `char str[] = "Hello";
+printf("%d", strlen(str));`,
+                        options: ['A) 4', 'B) 5', 'C) 6', 'D) Error'],
+                        correct: 1,
+                        arabic: 'ما هو الناتج؟'
+                    },
+                    {
+                        question: 'Which is the correct way to define a function?',
+                        options: ['A) function int add()', 'B) int add()', 'C) def int add()', 'D) int function add()'],
+                        correct: 1,
+                        arabic: 'ما هي الطريقة الصحيحة لتعريف دالة؟'
+                    },
+                    {
+                        question: 'What does the return statement do?',
+                        options: ['A) Returns control to calling function', 'B) Returns a value', 'C) Both A and B', 'D) Ends the program'],
+                        correct: 2,
+                        arabic: 'ماذا تفعل عبارة return؟'
+                    },
+                    {
+                        question: 'What is the scope of a local variable?',
+                        options: ['A) Entire program', 'B) Within the function only', 'C) Within the file', 'D) Global'],
+                        correct: 1,
+                        arabic: 'ما هو نطاق المتغير المحلي؟'
+                    },
+                    {
+                        question: 'Which operator has the highest precedence?',
+                        options: ['A) +', 'B) *', 'C) ()', 'D) ='],
+                        correct: 2,
+                        arabic: 'أي عامل له الأولوية الأعلى؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `int a = 10, b = 5;
+printf("%d", a % b);`,
+                        options: ['A) 2', 'B) 0', 'C) 5', 'D) 10'],
+                        correct: 1,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which is the correct way to include multiple conditions?',
+                        options: ['A) if(a > 0 && b > 0)', 'B) if(a > 0 and b > 0)', 'C) if(a > 0 & b > 0)', 'D) if(a > 0 + b > 0)'],
+                        correct: 0,
+                        arabic: 'ما هي الطريقة الصحيحة لتضمين شروط متعددة؟'
+                    },
+                    {
+                        question: 'What does the continue statement do?',
+                        options: ['A) Exits the loop', 'B) Skips current iteration', 'C) Restarts the loop', 'D) Ends the program'],
+                        correct: 1,
+                        arabic: 'ماذا تفعل عبارة continue؟'
+                    },
+                    {
+                        question: 'Which is the correct syntax for switch statement?',
+                        options: ['A) switch(var) { case 1: ... }', 'B) switch var { case 1: ... }', 'C) switch(var) case 1: ...', 'D) case(var) { switch 1: ... }'],
+                        correct: 0,
+                        arabic: 'ما هو التركيب الصحيح لعبارة switch؟'
+                    },
+                    {
+                        question: 'What is the default value of uninitialized global variables?',
+                        options: ['A) Garbage value', 'B) 0', 'C) -1', 'D) Undefined'],
+                        correct: 1,
+                        arabic: 'ما هي القيمة الافتراضية للمتغيرات العامة غير المبدئة؟'
+                    },
+                    {
+                        question: 'Which function is used to convert string to integer?',
+                        options: ['A) stoi()', 'B) atoi()', 'C) int()', 'D) convert()'],
+                        correct: 1,
+                        arabic: 'أي دالة تُستخدم لتحويل السلسلة النصية إلى عدد صحيح؟'
+                    },
+                    {
+                        question: 'What will be the output?',
+                        code: `int x = 5;
+printf("%d %d", x++, ++x);`,
+                        options: ['A) 5 7', 'B) 6 7', 'C) 5 6', 'D) Undefined behavior'],
+                        correct: 3,
+                        arabic: 'ما هو الناتج؟'
+                    }
+                ]
+            },
+            'pseudocode': {
+                title: 'Pseudocode',
+                questions: [
+                    {
+                        question: 'What will the following pseudocode output?',
+                        code: `SET x = 1
+WHILE x < 4
+    PRINT x
+    SET x = x + 1
+ENDWHILE`,
+                        options: ['A) 1 2 3', 'B) 1 2 3 4', 'C) 0 1 2 3', 'D) Infinite loop'],
+                        correct: 0,
+                        arabic: 'ما الذي سيخرج الكود الزائف التالي؟'
+                    },
+                    {
+                        question: 'In pseudocode, which statement is used for decision making?',
+                        options: ['A) IF ... THEN ... ELSE', 'B) WHILE', 'C) FOR', 'D) REPEAT'],
+                        correct: 0,
+                        arabic: 'في الكود الزائف، أي عبارة تُستخدم لاتخاذ القرار؟'
+                    },
+                    {
+                        question: 'What will be the output?',
+                        code: `SET a = 5
+SET b = 2
+IF a > b THEN
+    PRINT "Yes"
+ELSE
+    PRINT "No"
+ENDIF`,
+                        options: ['A) Yes', 'B) No', 'C) Error', 'D) None'],
+                        correct: 0,
+                        arabic: 'ما هو الناتج؟'
+                    },
+                    {
+                        question: 'Which loop is shown here?',
+                        code: `SET i = 0
+REPEAT
+    PRINT i
+    SET i = i + 1
+UNTIL i = 3`,
+                        options: ['A) For loop', 'B) While loop', 'C) Repeat-until loop', 'D) None'],
+                        correct: 2,
+                        arabic: 'أي حلقة معروضة هنا؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET sum = 0
+FOR i = 1 TO 3
+    sum = sum + i
+ENDFOR
+PRINT sum`,
+                        options: ['A) 3', 'B) 6', 'C) 5', 'D) 0'],
+                        correct: 1,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which keyword is used to stop a loop in pseudocode?',
+                        options: ['A) STOP', 'B) END', 'C) BREAK', 'D) EXIT'],
+                        correct: 2,
+                        arabic: 'أي كلمة مفتاحية تُستخدم لإيقاف الحلقة في الكود الزائف؟'
+                    },
+                    {
+                        question: 'What is the output?',
+                        code: `SET n = 2
+WHILE n < 10
+    n = n * 2
+ENDWHILE
+PRINT n`,
+                        options: ['A) 8', 'B) 10', 'C) 12', 'D) 16'],
+                        correct: 3,
+                        arabic: 'ما هو الناتج؟'
+                    },
+                    {
+                        question: 'Which of the following is the correct pseudocode to check if x is even?',
+                        options: ['A) IF x % 2 = 0 THEN PRINT "Even"', 'B) IF x / 2 = 0 THEN PRINT "Even"', 'C) IF x * 2 = 0 THEN PRINT "Even"', 'D) IF x % 2 == 1 THEN PRINT "Even"'],
+                        correct: 0,
+                        arabic: 'أي من التالي هو الكود الزائف الصحيح للتحقق من أن x زوجي؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `FOR i = 1 TO 5
+    IF i = 3 THEN
+        BREAK
+    ENDIF
+    PRINT i
+ENDFOR`,
+                        options: ['A) 1 2 3 4 5', 'B) 1 2', 'C) 1 2 3', 'D) 3 4 5'],
+                        correct: 1,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which of these is used to repeat a block of pseudocode a fixed number of times?',
+                        options: ['A) IF', 'B) FOR', 'C) WHILE', 'D) CASE'],
+                        correct: 1,
+                        arabic: 'أي من هؤلاء يُستخدم لتكرار كتلة من الكود الزائف عدد ثابت من المرات؟'
+                    },
+                    {
+                        question: 'What is the output?',
+                        code: `SET x = 0
+WHILE x <= 5
+    PRINT x
+    x = x + 2
+ENDWHILE`,
+                        options: ['A) 0 1 2 3 4 5', 'B) 0 2 4', 'C) 0 2 4 6', 'D) 2 4 6'],
+                        correct: 2,
+                        arabic: 'ما هو الناتج؟'
+                    },
+                    {
+                        question: 'Which of the following is used for multiple selection in pseudocode?',
+                        options: ['A) IF-ELSE', 'B) CASE', 'C) WHILE', 'D) REPEAT'],
+                        correct: 1,
+                        arabic: 'أي من التالي يُستخدم للاختيار المتعدد في الكود الزائف؟'
+                    },
+                    {
+                        question: 'What will this output?',
+                        code: `SET i = 1
+FOR i = 1 TO 3
+    PRINT i * i
+ENDFOR`,
+                        options: ['A) 1 4 9', 'B) 1 2 3', 'C) 2 4 6', 'D) 3 6 9'],
+                        correct: 0,
+                        arabic: 'ما الذي سيخرج هذا؟'
+                    },
+                    {
+                        question: 'Which pseudocode statement is used to end the program?',
+                        options: ['A) STOP', 'B) END', 'C) BREAK', 'D) EXIT'],
+                        correct: 0,
+                        arabic: 'أي عبارة في الكود الزائف تُستخدم لإنهاء البرنامج؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET n = 5
+IF n < 0 THEN
+    PRINT "Negative"
+ELSE IF n = 0 THEN
+    PRINT "Zero"
+ELSE
+    PRINT "Positive"
+ENDIF`,
+                        options: ['A) Negative', 'B) Zero', 'C) Positive', 'D) None'],
+                        correct: 2,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which loop structure is correct?',
+                        options: ['A) FOR i = 0 TO 5 STEP 1', 'B) FOR i IN RANGE(0,5)', 'C) LOOP i = 0 TO 5', 'D) FOR i = 0 TO 5 ++'],
+                        correct: 0,
+                        arabic: 'أي هيكل حلقة صحيح؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET a = 1
+SET b = 1
+PRINT a + b`,
+                        options: ['A) 1', 'B) 2', 'C) 3', 'D) 0'],
+                        correct: 1,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which of the following is the correct way to check multiple conditions?',
+                        options: ['A) IF a > 0 OR b > 0 THEN ...', 'B) IF a > 0 AND b > 0 THEN ...', 'C) Both A and B', 'D) None'],
+                        correct: 2,
+                        arabic: 'أي من التالي هو الطريقة الصحيحة للتحقق من شروط متعددة؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET count = 3
+WHILE count > 0
+    PRINT count
+    count = count - 1
+ENDWHILE`,
+                        options: ['A) 1 2 3', 'B) 3 2 1', 'C) 0 1 2', 'D) Infinite loop'],
+                        correct: 1,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which keyword is used to skip the current iteration in a loop?',
+                        options: ['A) SKIP', 'B) CONTINUE', 'C) BREAK', 'D) EXIT'],
+                        correct: 1,
+                        arabic: 'أي كلمة مفتاحية تُستخدم لتخطي التكرار الحالي في الحلقة؟'
+                    },
+                    // Additional Pseudocode Questions
+                    {
+                        question: 'What will be the output?',
+                        code: `SET arr[5] = {1, 2, 3, 4, 5}
+PRINT arr[2]`,
+                        options: ['A) 1', 'B) 2', 'C) 3', 'D) Error'],
+                        correct: 2,
+                        arabic: 'ما هو الناتج؟'
+                    },
+                    {
+                        question: 'Which statement is used for input in pseudocode?',
+                        options: ['A) INPUT', 'B) READ', 'C) GET', 'D) All of the above'],
+                        correct: 3,
+                        arabic: 'أي عبارة تُستخدم للإدخال في الكود الزائف؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET x = 10
+SET y = 3
+PRINT x DIV y`,
+                        options: ['A) 3.33', 'B) 3', 'C) 4', 'D) Error'],
+                        correct: 1,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which is the correct way to declare an array in pseudocode?',
+                        options: ['A) DECLARE arr[10]', 'B) SET arr[10]', 'C) ARRAY arr[10]', 'D) All of the above'],
+                        correct: 3,
+                        arabic: 'ما هي الطريقة الصحيحة لإعلان مصفوفة في الكود الزائف؟'
+                    },
+                    {
+                        question: 'What will be the result?',
+                        code: `SET max = 0
+FOR i = 1 TO 5
+    IF arr[i] > max THEN
+        max = arr[i]
+    ENDIF
+ENDFOR`,
+                        options: ['A) Finds minimum', 'B) Finds maximum', 'C) Finds sum', 'D) Finds average'],
+                        correct: 1,
+                        arabic: 'ما هي النتيجة؟'
+                    },
+                    {
+                        question: 'What does this pseudocode do?',
+                        code: `SET temp = a
+SET a = b
+SET b = temp`,
+                        options: ['A) Adds two numbers', 'B) Swaps two variables', 'C) Multiplies variables', 'D) Compares variables'],
+                        correct: 1,
+                        arabic: 'ماذا يفعل هذا الكود الزائف؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET factorial = 1
+FOR i = 1 TO 5
+    factorial = factorial * i
+ENDFOR
+PRINT factorial`,
+                        options: ['A) 5', 'B) 15', 'C) 120', 'D) 25'],
+                        correct: 2,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which loop executes the condition at the end?',
+                        options: ['A) FOR loop', 'B) WHILE loop', 'C) REPEAT-UNTIL loop', 'D) All loops'],
+                        correct: 2,
+                        arabic: 'أي حلقة تنفذ الشرط في النهاية؟'
+                    },
+                    {
+                        question: 'What will be the output?',
+                        code: `SET str = "Hello"
+PRINT LENGTH(str)`,
+                        options: ['A) 4', 'B) 5', 'C) 6', 'D) Hello'],
+                        correct: 1,
+                        arabic: 'ما هو الناتج؟'
+                    },
+                    {
+                        question: 'Which function is used to find the remainder in pseudocode?',
+                        options: ['A) REM', 'B) MOD', 'C) %', 'D) All of the above'],
+                        correct: 3,
+                        arabic: 'أي دالة تُستخدم لإيجاد الباقي في الكود الزائف؟'
+                    },
+                    {
+                        question: 'What will this nested loop print?',
+                        code: `FOR i = 1 TO 2
+    FOR j = 1 TO 2
+        PRINT i * j
+    ENDFOR
+ENDFOR`,
+                        options: ['A) 1 2 2 4', 'B) 1 1 2 2', 'C) 2 4 6 8', 'D) 1 2 3 4'],
+                        correct: 0,
+                        arabic: 'ما الذي ستطبعه هذه الحلقة المتداخلة؟'
+                    },
+                    {
+                        question: 'What is the purpose of this algorithm?',
+                        code: `FOR i = 0 TO n-2
+    FOR j = 0 TO n-2-i
+        IF arr[j] > arr[j+1] THEN
+            SWAP arr[j] and arr[j+1]
+        ENDIF
+    ENDFOR
+ENDFOR`,
+                        options: ['A) Linear search', 'B) Bubble sort', 'C) Binary search', 'D) Selection sort'],
+                        correct: 1,
+                        arabic: 'ما هو الغرض من هذه الخوارزمية؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET num = 153
+SET sum = 0
+WHILE num > 0
+    digit = num MOD 10
+    sum = sum + digit^3
+    num = num DIV 10
+ENDWHILE
+PRINT sum`,
+                        options: ['A) 153', 'B) 371', 'C) 9', 'D) 27'],
+                        correct: 0,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'Which statement is correct for function definition in pseudocode?',
+                        options: ['A) FUNCTION name(parameters)', 'B) DEF name(parameters)', 'C) PROCEDURE name(parameters)', 'D) All of the above'],
+                        correct: 3,
+                        arabic: 'أي عبارة صحيحة لتعريف دالة في الكود الزائف؟'
+                    },
+                    {
+                        question: 'What does this code check?',
+                        code: `SET isPrime = TRUE
+FOR i = 2 TO num/2
+    IF num MOD i = 0 THEN
+        isPrime = FALSE
+        BREAK
+    ENDIF
+ENDFOR`,
+                        options: ['A) Even number', 'B) Odd number', 'C) Prime number', 'D) Perfect number'],
+                        correct: 2,
+                        arabic: 'ماذا يتحقق هذا الكود؟'
+                    },
+                    {
+                        question: 'What will be the final value of result?',
+                        code: `SET result = 1
+SET base = 2
+SET power = 3
+FOR i = 1 TO power
+    result = result * base
+ENDFOR`,
+                        options: ['A) 6', 'B) 8', 'C) 9', 'D) 12'],
+                        correct: 1,
+                        arabic: 'ما هي القيمة النهائية للنتيجة؟'
+                    },
+                    {
+                        question: 'What type of search is this?',
+                        code: `SET found = FALSE
+FOR i = 0 TO n-1
+    IF arr[i] = target THEN
+        found = TRUE
+        BREAK
+    ENDIF
+ENDFOR`,
+                        options: ['A) Binary search', 'B) Linear search', 'C) Hash search', 'D) Tree search'],
+                        correct: 1,
+                        arabic: 'ما نوع البحث هذا؟'
+                    },
+                    {
+                        question: 'What will be printed?',
+                        code: `SET a = 0, b = 1
+FOR i = 1 TO 5
+    PRINT a
+    temp = a + b
+    a = b
+    b = temp
+ENDFOR`,
+                        options: ['A) 0 1 1 2 3', 'B) 1 1 2 3 5', 'C) 0 1 2 3 4', 'D) 1 2 3 4 5'],
+                        correct: 0,
+                        arabic: 'ما الذي سيُطبع؟'
+                    },
+                    {
+                        question: 'What does this algorithm find?',
+                        code: `SET gcd = a
+SET temp = b
+WHILE temp != 0
+    remainder = gcd MOD temp
+    gcd = temp
+    temp = remainder
+ENDWHILE`,
+                        options: ['A) LCM', 'B) GCD', 'C) Sum', 'D) Product'],
+                        correct: 1,
+                        arabic: 'ماذا تجد هذه الخوارزمية؟'
+                    }
+                ]
+            },
+            'sql': {
+                title: 'SQL Database',
+                questions: [
+                    {
+                        question: 'Which SQL statement is used to retrieve data from a database?',
+                        options: ['A) GET', 'B) SELECT', 'C) SHOW', 'D) READ'],
+                        correct: 1,
+                        arabic: 'أي عبارة SQL تُستخدم لاسترداد البيانات من قاعدة البيانات؟'
+                    },
+                    {
+                        question: 'What will the following query return?',
+                        code: `SELECT COUNT(*) FROM students;`,
+                        options: ['A) The total number of students', 'B) The sum of all student IDs', 'C) The highest student ID', 'D) An error'],
+                        correct: 0,
+                        arabic: 'ما الذي سيعيد الاستعلام التالي؟'
+                    },
+                    {
+                        question: 'Which keyword is used to filter rows in SQL?',
+                        options: ['A) FILTER', 'B) WHERE', 'C) HAVING', 'D) LIMIT'],
+                        correct: 1,
+                        arabic: 'أي كلمة مفتاحية تُستخدم لتصفية الصفوف في SQL؟'
+                    },
+                    {
+                        question: 'Which SQL clause is used to filter groups?',
+                        options: ['A) WHERE', 'B) GROUP BY', 'C) HAVING', 'D) ORDER BY'],
+                        correct: 2,
+                        arabic: 'أي عبارة SQL تُستخدم لتصفية المجموعات؟'
+                    },
+                    {
+                        question: 'What will this query return?',
+                        code: `SELECT name FROM employees WHERE salary > 5000;`,
+                        options: ['A) Names of employees with salary above 5000', 'B) All employees', 'C) Salaries above 5000', 'D) Error'],
+                        correct: 0,
+                        arabic: 'ما الذي سيعيد هذا الاستعلام؟'
+                    },
+                    {
+                        question: 'Which statement is correct to sort results in ascending order?',
+                        options: ['A) ORDER BY column ASC', 'B) ORDER column', 'C) SORT BY column', 'D) ORDER column ASCENDING'],
+                        correct: 0,
+                        arabic: 'أي عبارة صحيحة لترتيب النتائج تصاعدياً؟'
+                    },
+                    {
+                        question: 'Which query will return only unique values in a column?',
+                        options: ['A) SELECT column UNIQUE', 'B) SELECT DISTINCT column', 'C) SELECT column ONLY', 'D) SELECT UNIQUE column'],
+                        correct: 1,
+                        arabic: 'أي استعلام سيعيد القيم الفريدة فقط في العمود؟'
+                    },
+                    {
+                        question: 'What is the result of:',
+                        code: `SELECT * FROM products WHERE price BETWEEN 100 AND 200;`,
+                        options: ['A) Products with price equal to 100 or 200', 'B) Products with price greater than 100 and less than 200', 'C) Products with price between 100 and 200 inclusive', 'D) Error'],
+                        correct: 2,
+                        arabic: 'ما هي نتيجة:'
+                    },
+                    {
+                        question: 'Which query returns all customers whose name starts with "A"?',
+                        options: ['A) SELECT * FROM customers WHERE name LIKE "%A";', 'B) SELECT * FROM customers WHERE name LIKE "A%";', 'C) SELECT * FROM customers WHERE name = "A*";', 'D) SELECT * FROM customers WHERE name LIKE "_A";'],
+                        correct: 1,
+                        arabic: 'أي استعلام يعيد جميع العملاء الذين يبدأ اسمهم بـ "A"؟'
+                    },
+                    {
+                        question: 'What will this query do?',
+                        code: `SELECT department, COUNT(*)
+FROM employees
+GROUP BY department;`,
+                        options: ['A) Show each department once with the number of employees in it', 'B) Show all employees in each department', 'C) Show only departments with more than one employee', 'D) Error'],
+                        correct: 0,
+                        arabic: 'ماذا سيفعل هذا الاستعلام؟'
+                    },
+                    {
+                        question: 'Which of the following is correct to rename a column in SQL output?',
+                        options: ['A) SELECT name AS employee_name FROM employees;', 'B) SELECT name RENAME employee_name FROM employees;', 'C) SELECT name CHANGE employee_name FROM employees;', 'D) SELECT employee_name FROM employees;'],
+                        correct: 0,
+                        arabic: 'أي من التالي صحيح لإعادة تسمية عمود في مخرجات SQL؟'
+                    },
+                    {
+                        question: 'Which query will find the maximum salary?',
+                        options: ['A) SELECT MAX(salary) FROM employees;', 'B) SELECT salary FROM employees WHERE salary IS MAX;', 'C) SELECT TOP salary FROM employees;', 'D) SELECT salary MAX FROM employees;'],
+                        correct: 0,
+                        arabic: 'أي استعلام سيجد أقصى راتب؟'
+                    },
+                    {
+                        question: 'Which clause is used to arrange results in descending order?',
+                        options: ['A) SORT DESC', 'B) ORDER BY ... DESC', 'C) DESC BY ...', 'D) ARRANGE DESC'],
+                        correct: 1,
+                        arabic: 'أي عبارة تُستخدم لترتيب النتائج تنازلياً؟'
+                    },
+                    {
+                        question: 'What will happen here?',
+                        code: `SELECT name FROM customers WHERE age > 30 OR city = 'Cairo';`,
+                        options: ['A) Returns customers older than 30 only', 'B) Returns customers in Cairo only', 'C) Returns customers older than 30 or from Cairo', 'D) Error'],
+                        correct: 2,
+                        arabic: 'ماذا سيحدث هنا؟'
+                    },
+                    {
+                        question: 'Which query counts only employees with salary above 4000?',
+                        options: ['A) SELECT COUNT(*) FROM employees HAVING salary > 4000;', 'B) SELECT COUNT(*) FROM employees WHERE salary > 4000;', 'C) SELECT COUNT(salary > 4000) FROM employees;', 'D) None'],
+                        correct: 1,
+                        arabic: 'أي استعلام يعد الموظفين الذين راتبهم أعلى من 4000 فقط؟'
+                    },
+                    {
+                        question: 'Which SQL keyword is used to combine rows from two queries?',
+                        options: ['A) COMBINE', 'B) UNION', 'C) JOIN', 'D) MERGE'],
+                        correct: 1,
+                        arabic: 'أي كلمة مفتاحية SQL تُستخدم لدمج الصفوف من استعلامين؟'
+                    },
+                    {
+                        question: 'Which join returns all records from both tables, even if they don\'t match?',
+                        options: ['A) INNER JOIN', 'B) LEFT JOIN', 'C) RIGHT JOIN', 'D) FULL OUTER JOIN'],
+                        correct: 3,
+                        arabic: 'أي join يعيد جميع السجلات من الجدولين، حتى لو لم تتطابق؟'
+                    },
+                    // Additional SQL Questions
+                    {
+                        question: 'Which function returns the current date and time?',
+                        options: ['A) NOW()', 'B) CURRENT_DATE()', 'C) TODAY()', 'D) GETDATE()'],
+                        correct: 0,
+                        arabic: 'أي دالة تُعيد التاريخ والوقت الحاليين؟'
+                    },
+                    {
+                        question: 'What does this query do?',
+                        code: `SELECT AVG(salary) FROM employees;`,
+                        options: ['A) Finds minimum salary', 'B) Finds maximum salary', 'C) Finds average salary', 'D) Counts employees'],
+                        correct: 2,
+                        arabic: 'ماذا يفعل هذا الاستعلام؟'
+                    },
+                    {
+                        question: 'Which is the correct syntax for INNER JOIN?',
+                        options: ['A) SELECT * FROM table1 INNER JOIN table2 ON table1.id = table2.id', 'B) SELECT * FROM table1 JOIN table2 WHERE table1.id = table2.id', 'C) Both A and B', 'D) None'],
+                        correct: 2,
+                        arabic: 'ما هو التركيب الصحيح لـ INNER JOIN؟'
+                    },
+                    {
+                        question: 'What will this return?',
+                        code: `SELECT SUM(price) FROM products WHERE category = 'Electronics';`,
+                        options: ['A) Count of electronics products', 'B) Average price of electronics', 'C) Total price of all electronics', 'D) Maximum price in electronics'],
+                        correct: 2,
+                        arabic: 'ما الذي سيعيد هذا؟'
+                    },
+                    {
+                        question: 'Which operator is used for pattern matching?',
+                        options: ['A) =', 'B) LIKE', 'C) MATCH', 'D) CONTAINS'],
+                        correct: 1,
+                        arabic: 'أي عامل يُستخدم لمطابقة الأنماط؟'
+                    },
+                    {
+                        question: 'What does the % wildcard represent in LIKE?',
+                        options: ['A) Single character', 'B) Zero or more characters', 'C) Exactly one character', 'D) Space character'],
+                        correct: 1,
+                        arabic: 'ماذا يمثل الرمز البديل % في LIKE؟'
+                    },
+                    {
+                        question: 'Which query finds employees with NULL salary?',
+                        options: ['A) SELECT * FROM employees WHERE salary = NULL', 'B) SELECT * FROM employees WHERE salary IS NULL', 'C) SELECT * FROM employees WHERE salary == NULL', 'D) SELECT * FROM employees WHERE salary EQUALS NULL'],
+                        correct: 1,
+                        arabic: 'أي استعلام يجد الموظفين الذين راتبهم NULL؟'
+                    },
+                    {
+                        question: 'What is the purpose of GROUP BY?',
+                        options: ['A) Sort records', 'B) Filter records', 'C) Group records with same values', 'D) Join tables'],
+                        correct: 2,
+                        arabic: 'ما هو الغرض من GROUP BY؟'
+                    },
+                    {
+                        question: 'Which is correct for limiting results to first 10 rows?',
+                        options: ['A) LIMIT 10', 'B) TOP 10', 'C) FIRST 10', 'D) Both A and B (depends on DBMS)'],
+                        correct: 3,
+                        arabic: 'أيهما صحيح لتحديد النتائج بأول 10 صفوف؟'
+                    },
+                    {
+                        question: 'What does this query return?',
+                        code: `SELECT name, COUNT(*) FROM employees GROUP BY department HAVING COUNT(*) > 5;`,
+                        options: ['A) All employees', 'B) Departments with more than 5 employees', 'C) First 5 employees per department', 'D) Error'],
+                        correct: 1,
+                        arabic: 'ما الذي يعيد هذا الاستعلام؟'
+                    },
+                    {
+                        question: 'Which function converts text to uppercase?',
+                        options: ['A) UPPER()', 'B) UCASE()', 'C) UPPERCASE()', 'D) Both A and B'],
+                        correct: 3,
+                        arabic: 'أي دالة تحول النص إلى أحرف كبيرة؟'
+                    },
+                    {
+                        question: 'What is the difference between WHERE and HAVING?',
+                        options: ['A) No difference', 'B) WHERE filters rows, HAVING filters groups', 'C) WHERE filters groups, HAVING filters rows', 'D) HAVING is faster'],
+                        correct: 1,
+                        arabic: 'ما الفرق بين WHERE و HAVING؟'
+                    },
+                    {
+                        question: 'Which query finds the second highest salary?',
+                        options: ['A) SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees)', 'B) SELECT salary FROM employees ORDER BY salary DESC LIMIT 1,1', 'C) Both A and B', 'D) None'],
+                        correct: 2,
+                        arabic: 'أي استعلام يجد ثاني أعلى راتب؟'
+                    },
+                    {
+                        question: 'What does LEFT JOIN return?',
+                        options: ['A) Only matching records', 'B) All records from left table', 'C) All records from right table', 'D) All records from both tables'],
+                        correct: 1,
+                        arabic: 'ماذا يُعيد LEFT JOIN؟'
+                    },
+                    {
+                        question: 'Which is used to remove duplicate rows?',
+                        options: ['A) UNIQUE', 'B) DISTINCT', 'C) REMOVE', 'D) FILTER'],
+                        correct: 1,
+                        arabic: 'أيهما يُستخدم لإزالة الصفوف المكررة؟'
+                    },
+                    {
+                        question: 'What will this query return?',
+                        code: `SELECT * FROM products WHERE price IN (100, 200, 300);`,
+                        options: ['A) Products with price between 100-300', 'B) Products with price exactly 100, 200, or 300', 'C) Products with price greater than 100', 'D) Error'],
+                        correct: 1,
+                        arabic: 'ما الذي سيعيد هذا الاستعلام؟'
+                    },
+                    {
+                        question: 'Which operator is used for range checking?',
+                        options: ['A) IN', 'B) BETWEEN', 'C) RANGE', 'D) FROM...TO'],
+                        correct: 1,
+                        arabic: 'أي عامل يُستخدم للتحقق من النطاق؟'
+                    },
+                    {
+                        question: 'What does this subquery do?',
+                        code: `SELECT name FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);`,
+                        options: ['A) Finds employees with maximum salary', 'B) Finds employees with above average salary', 'C) Finds employees with minimum salary', 'D) Counts all employees'],
+                        correct: 1,
+                        arabic: 'ماذا يفعل هذا الاستعلام الفرعي؟'
+                    },
+                    {
+                        question: 'Which function returns the length of a string?',
+                        options: ['A) LEN()', 'B) LENGTH()', 'C) SIZE()', 'D) Both A and B'],
+                        correct: 3,
+                        arabic: 'أي دالة تُعيد طول السلسلة النصية؟'
+                    },
+                    {
+                        question: 'What is the result of this query?',
+                        code: `SELECT ROUND(15.678, 2);`,
+                        options: ['A) 15', 'B) 15.67', 'C) 15.68', 'D) 16'],
+                        correct: 2,
+                        arabic: 'ما هي نتيجة هذا الاستعلام؟'
+                    },
+                    {
+                        question: 'Which clause is used to specify conditions for groups?',
+                        options: ['A) WHERE', 'B) HAVING', 'C) CONDITION', 'D) IF'],
+                        correct: 1,
+                        arabic: 'أي عبارة تُستخدم لتحديد شروط المجموعات؟'
+                    },
+                    {
+                        question: 'What does COALESCE function do?',
+                        options: ['A) Joins tables', 'B) Returns first non-NULL value', 'C) Counts records', 'D) Sorts data'],
+                        correct: 1,
+                        arabic: 'ماذا تفعل دالة COALESCE؟'
+                    },
+                    {
+                        question: 'Which is correct for date comparison?',
+                        options: ['A) WHERE date = "2023-01-01"', 'B) WHERE date = \'2023-01-01\'', 'C) WHERE date = #2023-01-01#', 'D) Both A and B'],
+                        correct: 3,
+                        arabic: 'أيهما صحيح لمقارنة التاريخ؟'
+                    },
+                    {
+                        question: 'What does this query calculate?',
+                        code: `SELECT department, AVG(salary), COUNT(*) FROM employees GROUP BY department;`,
+                        options: ['A) Total salary per department', 'B) Average salary and employee count per department', 'C) Maximum salary per department', 'D) Minimum salary per department'],
+                        correct: 1,
+                        arabic: 'ماذا يحسب هذا الاستعلام؟'
+                    }
+                ]
+            },
+            'algorithms': {
+                title: 'Algorithms & Data Structures',
+                questions: [
+                    {
+                        question: 'Which sorting algorithm compares each pair of adjacent elements and swaps them if they are in the wrong order?',
+                        options: ['A) Selection Sort', 'B) Bubble Sort', 'C) Merge Sort', 'D) Insertion Sort'],
+                        correct: 1,
+                        arabic: 'أي خوارزمية ترتيب تقارن كل زوج من العناصر المتجاورة وتبدلهما إذا كانا في الترتيب الخاطئ؟'
+                    },
+                    {
+                        question: 'What is the time complexity of Bubble Sort in the worst case?',
+                        options: ['A) O(n)', 'B) O(log n)', 'C) O(n²)', 'D) O(1)'],
+                        correct: 2,
+                        arabic: 'ما هي التعقد الزمني لـ Bubble Sort في أسوأ الحالات؟'
+                    },
+                    {
+                        question: 'Which sorting algorithm repeatedly selects the smallest element from the unsorted part and puts it at the beginning?',
+                        options: ['A) Bubble Sort', 'B) Selection Sort', 'C) Quick Sort', 'D) Merge Sort'],
+                        correct: 1,
+                        arabic: 'أي خوارزمية ترتيب تختار بشكل متكرر أصغر عنصر من الجزء غير المرتب وتضعه في البداية؟'
+                    },
+                    {
+                        question: 'What is the time complexity of Selection Sort in the best case?',
+                        options: ['A) O(n)', 'B) O(n log n)', 'C) O(n²)', 'D) O(1)'],
+                        correct: 2,
+                        arabic: 'ما هي التعقد الزمني لـ Selection Sort في أفضل الحالات؟'
+                    },
+                    {
+                        question: 'Which search algorithm works only on sorted lists?',
+                        options: ['A) Linear Search', 'B) Binary Search', 'C) Bubble Sort', 'D) Selection Sort'],
+                        correct: 1,
+                        arabic: 'أي خوارزمية بحث تعمل فقط على القوائم المرتبة؟'
+                    },
+                    {
+                        question: 'What is the time complexity of Linear Search in the worst case?',
+                        options: ['A) O(1)', 'B) O(n)', 'C) O(n²)', 'D) O(log n)'],
+                        correct: 1,
+                        arabic: 'ما هي التعقد الزمني للبحث الخطي في أسوأ الحالات؟'
+                    },
+                    {
+                        question: 'In Binary Search, if the element is not found, what happens?',
+                        options: ['A) The search stops when the search range is empty', 'B) It returns the last checked element', 'C) It keeps searching infinitely', 'D) It gives an error'],
+                        correct: 0,
+                        arabic: 'في البحث الثنائي، إذا لم يتم العثور على العنصر، ماذا يحدث؟'
+                    },
+                    {
+                        question: 'What is the best-case time complexity of Binary Search?',
+                        options: ['A) O(1)', 'B) O(n)', 'C) O(log n)', 'D) O(n²)'],
+                        correct: 0,
+                        arabic: 'ما هي التعقد الزمني للبحث الثنائي في أفضل الحالات؟'
+                    },
+                    {
+                        question: 'Which algorithm is stable: Bubble Sort or Selection Sort?',
+                        options: ['A) Bubble Sort only', 'B) Selection Sort only', 'C) Both', 'D) None'],
+                        correct: 0,
+                        arabic: 'أي خوارزمية مستقرة: Bubble Sort أم Selection Sort؟'
+                    },
+                    {
+                        question: 'Which sorting algorithm usually performs better for small datasets?',
+                        options: ['A) Quick Sort', 'B) Selection Sort', 'C) Merge Sort', 'D) Heap Sort'],
+                        correct: 1,
+                        arabic: 'أي خوارزمية ترتيب عادة ما تؤدي بشكل أفضل للبيانات الصغيرة؟'
+                    },
+                    // Additional Algorithm Questions
+                    {
+                        question: 'What is the space complexity of Merge Sort?',
+                        options: ['A) O(1)', 'B) O(n)', 'C) O(log n)', 'D) O(n²)'],
+                        correct: 1,
+                        arabic: 'ما هي التعقد المكاني لـ Merge Sort؟'
+                    },
+                    {
+                        question: 'Which data structure uses LIFO (Last In First Out) principle?',
+                        options: ['A) Queue', 'B) Stack', 'C) Array', 'D) Linked List'],
+                        correct: 1,
+                        arabic: 'أي هيكل بيانات يستخدم مبدأ LIFO (الأخير يدخل أول يخرج)؟'
+                    },
+                    {
+                        question: 'What is the time complexity of accessing an element in an array?',
+                        options: ['A) O(1)', 'B) O(n)', 'C) O(log n)', 'D) O(n²)'],
+                        correct: 0,
+                        arabic: 'ما هي التعقد الزمني للوصول إلى عنصر في المصفوفة؟'
+                    },
+                    {
+                        question: 'Which traversal method visits the root node first?',
+                        options: ['A) Inorder', 'B) Preorder', 'C) Postorder', 'D) Level order'],
+                        correct: 1,
+                        arabic: 'أي طريقة اجتياز تزور العقدة الجذر أولاً؟'
+                    },
+                    {
+                        question: 'What is the time complexity of insertion in a hash table (average case)?',
+                        options: ['A) O(1)', 'B) O(n)', 'C) O(log n)', 'D) O(n²)'],
+                        correct: 0,
+                        arabic: 'ما هي التعقد الزمني للإدراج في جدول التجمع (متوسط الحالات)؟'
+                    },
+                    {
+                        question: 'Which algorithm uses divide and conquer approach?',
+                        options: ['A) Bubble Sort', 'B) Selection Sort', 'C) Merge Sort', 'D) Insertion Sort'],
+                        correct: 2,
+                        arabic: 'أي خوارزمية تستخدم نهج فرق تسد؟'
+                    },
+                    {
+                        question: 'What is the time complexity of Quick Sort in the average case?',
+                        options: ['A) O(n)', 'B) O(n log n)', 'C) O(n²)', 'D) O(log n)'],
+                        correct: 1,
+                        arabic: 'ما هي التعقد الزمني لـ Quick Sort في متوسط الحالات؟'
+                    },
+                    {
+                        question: 'Which data structure is used in BFS (Breadth First Search)?',
+                        options: ['A) Stack', 'B) Queue', 'C) Array', 'D) Linked List'],
+                        correct: 1,
+                        arabic: 'أي هيكل بيانات يُستخدم في BFS (البحث بالعرض أولاً)؟'
+                    },
+                    {
+                        question: 'What is the purpose of a hash function?',
+                        options: ['A) Sort data', 'B) Map keys to array indices', 'C) Search data', 'D) Delete data'],
+                        correct: 1,
+                        arabic: 'ما هو الغرض من دالة التجمع؟'
+                    },
+                    {
+                        question: 'Which operation is NOT typically performed on a queue?',
+                        options: ['A) Enqueue', 'B) Dequeue', 'C) Push', 'D) Front'],
+                        correct: 2,
+                        arabic: 'أي عملية لا تُنفذ عادة على الطابور؟'
+                    },
+                    {
+                        question: 'What is the worst-case time complexity of insertion sort?',
+                        options: ['A) O(n)', 'B) O(n log n)', 'C) O(n²)', 'D) O(1)'],
+                        correct: 2,
+                        arabic: 'ما هي التعقد الزمني لـ Insertion Sort في أسوأ الحالات؟'
+                    },
+                    {
+                        question: 'Which tree traversal gives nodes in sorted order for BST?',
+                        options: ['A) Preorder', 'B) Inorder', 'C) Postorder', 'D) Level order'],
+                        correct: 1,
+                        arabic: 'أي اجتياز شجرة يعطي العقد بترتيب مرتب لـ BST؟'
+                    },
+                    {
+                        question: 'What is the space complexity of iterative binary search?',
+                        options: ['A) O(1)', 'B) O(n)', 'C) O(log n)', 'D) O(n²)'],
+                        correct: 0,
+                        arabic: 'ما هي التعقد المكاني للبحث الثنائي التكراري؟'
+                    },
+                    {
+                        question: 'Which sorting algorithm is adaptive?',
+                        options: ['A) Selection Sort', 'B) Insertion Sort', 'C) Heap Sort', 'D) Merge Sort'],
+                        correct: 1,
+                        arabic: 'أي خوارزمية ترتيب قابلة للتكيف؟'
+                    },
+                    {
+                        question: 'What is the maximum number of nodes at level h in a binary tree?',
+                        options: ['A) 2^h', 'B) 2^(h-1)', 'C) 2^(h+1)', 'D) h²'],
+                        correct: 0,
+                        arabic: 'ما هو العدد الأقصى للعقد في المستوى h في الشجرة الثنائية؟'
+                    },
+                    {
+                        question: 'Which algorithm is used to find shortest path in weighted graphs?',
+                        options: ['A) BFS', 'B) DFS', 'C) Dijkstra', 'D) Linear Search'],
+                        correct: 2,
+                        arabic: 'أي خوارزمية تُستخدم لإيجاد أقصر مسار في الرسوم البيانية المرجحة؟'
+                    },
+                    {
+                        question: 'What is the time complexity of heap sort?',
+                        options: ['A) O(n)', 'B) O(n log n)', 'C) O(n²)', 'D) O(1)'],
+                        correct: 1,
+                        arabic: 'ما هي التعقد الزمني لـ Heap Sort؟'
+                    },
+                    {
+                        question: 'Which data structure is used in DFS (Depth First Search)?',
+                        options: ['A) Queue', 'B) Stack', 'C) Array', 'D) Hash Table'],
+                        correct: 1,
+                        arabic: 'أي هيكل بيانات يُستخدم في DFS (البحث بالعمق أولاً)؟'
+                    },
+                    {
+                        question: 'What is recursion?',
+                        options: ['A) A function calling another function', 'B) A function calling itself', 'C) A loop structure', 'D) A sorting technique'],
+                        correct: 1,
+                        arabic: 'ما هو الاستدعاء المتكرر؟'
+                    },
+                    {
+                        question: 'What is the base case in recursion?',
+                        options: ['A) The first call', 'B) The condition to stop recursion', 'C) The recursive call', 'D) The return value'],
+                        correct: 1,
+                        arabic: 'ما هي الحالة الأساسية في الاستدعاء المتكرر؟'
+                    },
+                    {
+                        question: 'Which algorithm uses backtracking?',
+                        options: ['A) Binary Search', 'B) N-Queens Problem', 'C) Bubble Sort', 'D) Linear Search'],
+                        correct: 1,
+                        arabic: 'أي خوارزمية تستخدم التراجع؟'
+                    },
+                    {
+                        question: 'What is std::vector in C++?',
+                        options: ['A) Static array', 'B) Dynamic array', 'C) Linked list', 'D) Hash table'],
+                        correct: 1,
+                        arabic: 'ما هو std::vector في C++؟'
+                    },
+                    {
+                        question: 'Which complexity is better: O(n) or O(log n)?',
+                        options: ['A) O(n)', 'B) O(log n)', 'C) Both are same', 'D) Depends on input'],
+                        correct: 1,
+                        arabic: 'أي تعقد أفضل: O(n) أم O(log n)؟'
+                    },
+                    {
+                        question: 'What is the height of a balanced binary tree with n nodes?',
+                        options: ['A) O(n)', 'B) O(log n)', 'C) O(n²)', 'D) O(1)'],
+                        correct: 1,
+                        arabic: 'ما هو ارتفاع الشجرة الثنائية المتوازنة مع n عقدة؟'
+                    },
+                    {
+                        question: 'Which sorting algorithm has the best average case performance?',
+                        options: ['A) Bubble Sort', 'B) Selection Sort', 'C) Quick Sort', 'D) Insertion Sort'],
+                        correct: 2,
+                        arabic: 'أي خوارزمية ترتيب لها أفضل أداء في متوسط الحالات؟'
+                    },
+                    {
+                        question: 'What does Big O notation represent?',
+                        options: ['A) Best case complexity', 'B) Average case complexity', 'C) Worst case complexity', 'D) Space complexity only'],
+                        correct: 2,
+                        arabic: 'ماذا يمثل رمز Big O؟'
+                    },
+                    {
+                        question: 'Which data structure allows insertion and deletion at both ends?',
+                        options: ['A) Stack', 'B) Queue', 'C) Deque', 'D) Array'],
+                        correct: 2,
+                        arabic: 'أي هيكل بيانات يسمح بالإدراج والحذف من كلا الطرفين؟'
+                    },
+                    {
+                        question: 'What is the time complexity of searching in a balanced BST?',
+                        options: ['A) O(1)', 'B) O(log n)', 'C) O(n)', 'D) O(n²)'],
+                        correct: 1,
+                        arabic: 'ما هي التعقد الزمني للبحث في BST متوازنة؟'
+                    },
+                    {
+                        question: 'Which algorithm is greedy?',
+                        options: ['A) Dijkstra\'s algorithm', 'B) Merge Sort', 'C) Binary Search', 'D) Bubble Sort'],
+                        correct: 0,
+                        arabic: 'أي خوارزمية جشعة؟'
+                    }
+                ]
+            },
+            'flowchart': {
+                title: 'Flowchart Symbols',
+                questions: [
+                    {
+                        question: 'Which flowchart symbol is used to represent the start or end of a process?',
+                        options: ['A) Rectangle', 'B) Diamond', 'C) Oval', 'D) Parallelogram'],
+                        correct: 2,
+                        arabic: 'أي رمز مخطط انسيابي يُستخدم لتمثيل بداية أو نهاية العملية؟'
+                    },
+                    {
+                        question: 'Which symbol represents a decision in a flowchart?',
+                        options: ['A) Rectangle', 'B) Diamond', 'C) Oval', 'D) Circle'],
+                        correct: 1,
+                        arabic: 'أي رمز يمثل القرار في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which symbol is used for input/output operations in a flowchart?',
+                        options: ['A) Rectangle', 'B) Diamond', 'C) Parallelogram', 'D) Oval'],
+                        correct: 2,
+                        arabic: 'أي رمز يُستخدم لعمليات الإدخال/الإخراج في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which symbol is used for processing steps in a flowchart?',
+                        options: ['A) Rectangle', 'B) Diamond', 'C) Circle', 'D) Parallelogram'],
+                        correct: 0,
+                        arabic: 'أي رمز يُستخدم لخطوات المعالجة في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What does an arrow in a flowchart indicate?',
+                        options: ['A) A decision', 'B) The direction of flow', 'C) A process', 'D) Input/Output'],
+                        correct: 1,
+                        arabic: 'ماذا يشير السهم في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which symbol is used as a connector within the same page in a flowchart?',
+                        options: ['A) Oval', 'B) Diamond', 'C) Small Circle', 'D) Parallelogram'],
+                        correct: 2,
+                        arabic: 'أي رمز يُستخدم كموصل داخل نفس الصفحة في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'In a flowchart, which shape should be used to represent calculations?',
+                        options: ['A) Rectangle', 'B) Parallelogram', 'C) Diamond', 'D) Oval'],
+                        correct: 0,
+                        arabic: 'في المخطط الانسيابي، أي شكل يجب استخدامه لتمثيل الحسابات؟'
+                    },
+                    {
+                        question: 'What is the correct order to read a flowchart?',
+                        options: ['A) From bottom to top', 'B) From left to right only', 'C) From start to end following arrows', 'D) Randomly'],
+                        correct: 2,
+                        arabic: 'ما هو الترتيب الصحيح لقراءة المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which of the following is not a standard flowchart symbol?',
+                        options: ['A) Rectangle', 'B) Triangle', 'C) Diamond', 'D) Oval'],
+                        correct: 1,
+                        arabic: 'أي من التالي ليس رمزاً قياسياً في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What does the parallelogram represent in a flowchart?',
+                        options: ['A) Process step', 'B) Input/Output', 'C) Decision', 'D) Start/End'],
+                        correct: 1,
+                        arabic: 'ماذا يمثل متوازي الأضلاع في المخطط الانسيابي؟'
+                    },
+                    // Additional Flowchart Questions
+                    {
+                        question: 'Which symbol is used for manual input in a flowchart?',
+                        options: ['A) Rectangle', 'B) Parallelogram', 'C) Trapezoid', 'D) Circle'],
+                        correct: 2,
+                        arabic: 'أي رمز يُستخدم للإدخال اليدوي في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What does a diamond symbol with multiple exits represent?',
+                        options: ['A) Simple decision', 'B) Multiple decision', 'C) Process', 'D) Loop'],
+                        correct: 1,
+                        arabic: 'ماذا يمثل الرمز الماسي مع عدة مخارج؟'
+                    },
+                    {
+                        question: 'Which symbol represents a predefined process or subroutine?',
+                        options: ['A) Rectangle', 'B) Rectangle with double sides', 'C) Circle', 'D) Diamond'],
+                        correct: 1,
+                        arabic: 'أي رمز يمثل عملية محددة مسبقاً أو برنامج فرعي؟'
+                    },
+                    {
+                        question: 'What is the purpose of a flowchart?',
+                        options: ['A) Document code', 'B) Visualize algorithm steps', 'C) Test programs', 'D) Store data'],
+                        correct: 1,
+                        arabic: 'ما هو الغرض من المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which symbol is used for file operations?',
+                        options: ['A) Rectangle', 'B) Cylinder', 'C) Triangle', 'D) Pentagon'],
+                        correct: 1,
+                        arabic: 'أي رمز يُستخدم لعمليات الملف؟'
+                    },
+                    {
+                        question: 'What does a loop structure look like in a flowchart?',
+                        options: ['A) Straight line', 'B) Circle with arrows', 'C) Arrows forming a cycle', 'D) Rectangle only'],
+                        correct: 2,
+                        arabic: 'كيف يبدو هيكل الحلقة في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which symbol represents a document or report?',
+                        options: ['A) Rectangle', 'B) Parallelogram', 'C) Wavy rectangle', 'D) Circle'],
+                        correct: 2,
+                        arabic: 'أي رمز يمثل وثيقة أو تقرير؟'
+                    },
+                    {
+                        question: 'What should every flowchart have?',
+                        options: ['A) At least one decision', 'B) Start and end symbols', 'C) Multiple processes', 'D) Loops only'],
+                        correct: 1,
+                        arabic: 'ماذا يجب أن يكون في كل مخطط انسيابي؟'
+                    },
+                    {
+                        question: 'Which direction should flowchart arrows generally point?',
+                        options: ['A) Left to right', 'B) Top to bottom', 'C) Right to left', 'D) Any direction'],
+                        correct: 1,
+                        arabic: 'في أي اتجاه يجب أن تشير أسهم المخطط الانسيابي عموماً؟'
+                    },
+                    {
+                        question: 'What does a hexagon symbol typically represent?',
+                        options: ['A) Process', 'B) Decision', 'C) Preparation or initialization', 'D) Input/Output'],
+                        correct: 2,
+                        arabic: 'ماذا يمثل الرمز السداسي عادة؟'
+                    },
+                    {
+                        question: 'Which symbol is used for manual operations?',
+                        options: ['A) Rectangle', 'B) Trapezoid', 'C) Circle', 'D) Triangle'],
+                        correct: 1,
+                        arabic: 'أي رمز يُستخدم للعمليات اليدوية؟'
+                    },
+                    {
+                        question: 'What is the maximum number of flow lines entering a process symbol?',
+                        options: ['A) 1', 'B) 2', 'C) 3', 'D) No limit'],
+                        correct: 3,
+                        arabic: 'ما هو العدد الأقصى لخطوط التدفق الداخلة لرمز العملية؟'
+                    },
+                    {
+                        question: 'Which symbol represents stored data or database?',
+                        options: ['A) Rectangle', 'B) Cylinder', 'C) Circle', 'D) Diamond'],
+                        correct: 1,
+                        arabic: 'أي رمز يمثل البيانات المخزنة أو قاعدة البيانات؟'
+                    },
+                    {
+                        question: 'What should be written inside a decision symbol?',
+                        options: ['A) Process steps', 'B) Yes/No question', 'C) Input values', 'D) Output results'],
+                        correct: 1,
+                        arabic: 'ماذا يجب أن يُكتب داخل رمز القرار؟'
+                    },
+                    {
+                        question: 'Which symbol is used for delay or wait operations?',
+                        options: ['A) Rectangle', 'B) Circle', 'C) D-shaped symbol', 'D) Triangle'],
+                        correct: 2,
+                        arabic: 'أي رمز يُستخدم لعمليات التأخير أو الانتظار؟'
+                    },
+                    {
+                        question: 'What does crossing flow lines indicate in a flowchart?',
+                        options: ['A) Error in design', 'B) Complex logic', 'C) Multiple processes', 'D) Should be avoided'],
+                        correct: 3,
+                        arabic: 'ماذا تشير خطوط التدفق المتقاطعة في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which is the best practice for flowchart design?',
+                        options: ['A) Use as many symbols as possible', 'B) Keep it simple and clear', 'C) Use only rectangles', 'D) Avoid using arrows'],
+                        correct: 1,
+                        arabic: 'ما هي أفضل ممارسة لتصميم المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What does a small circle with a letter inside represent?',
+                        options: ['A) Process', 'B) Connector to another page', 'C) Decision', 'D) Start/End'],
+                        correct: 1,
+                        arabic: 'ماذا تمثل الدائرة الصغيرة مع حرف بالداخل؟'
+                    },
+                    {
+                        question: 'Which symbol represents a terminal point?',
+                        options: ['A) Rectangle', 'B) Diamond', 'C) Oval or rounded rectangle', 'D) Circle'],
+                        correct: 2,
+                        arabic: 'أي رمز يمثل نقطة النهاية؟'
+                    },
+                    {
+                        question: 'What should be the flow of a well-designed flowchart?',
+                        options: ['A) Complex with many branches', 'B) Simple and logical', 'C) Random', 'D) Circular only'],
+                        correct: 1,
+                        arabic: 'كيف يجب أن يكون تدفق المخطط الانسيابي المصمم جيداً؟'
+                    },
+                    {
+                        question: 'Which symbol is NOT typically used in basic flowcharts?',
+                        options: ['A) Rectangle', 'B) Diamond', 'C) Star', 'D) Oval'],
+                        correct: 2,
+                        arabic: 'أي رمز لا يُستخدم عادة في المخططات الانسيابية الأساسية؟'
+                    },
+                    {
+                        question: 'What does an off-page connector symbol look like?',
+                        options: ['A) Circle', 'B) Pentagon', 'C) Hexagon', 'D) Triangle'],
+                        correct: 1,
+                        arabic: 'كيف يبدو رمز الموصل خارج الصفحة؟'
+                    },
+                    {
+                        question: 'Which element is essential for flowchart readability?',
+                        options: ['A) Colors', 'B) Complex shapes', 'C) Clear labels', 'D) Multiple fonts'],
+                        correct: 2,
+                        arabic: 'أي عنصر ضروري لسهولة قراءة المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What does a merge symbol represent in flowcharts?',
+                        options: ['A) Combining multiple flows', 'B) Splitting flows', 'C) Decision point', 'D) Process step'],
+                        correct: 0,
+                        arabic: 'ماذا يمثل رمز الدمج في المخططات الانسيابية؟'
+                    },
+                    {
+                        question: 'Which is the correct way to show a loop in a flowchart?',
+                        options: ['A) Straight line only', 'B) Arrow going back to previous step', 'C) Multiple rectangles', 'D) No specific way'],
+                        correct: 1,
+                        arabic: 'ما هي الطريقة الصحيحة لإظهار الحلقة في المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What should be avoided in professional flowcharts?',
+                        options: ['A) Clear symbols', 'B) Proper arrows', 'C) Crossing lines', 'D) Start/End symbols'],
+                        correct: 2,
+                        arabic: 'ماذا يجب تجنبه في المخططات الانسيابية المهنية؟'
+                    },
+                    {
+                        question: 'Which flowchart type shows the sequence of operations?',
+                        options: ['A) System flowchart', 'B) Program flowchart', 'C) Document flowchart', 'D) All of the above'],
+                        correct: 3,
+                        arabic: 'أي نوع من المخططات الانسيابية يظهر تسلسل العمليات؟'
+                    },
+                    {
+                        question: 'What is the main advantage of using flowcharts?',
+                        options: ['A) Makes code run faster', 'B) Visual representation of logic', 'C) Reduces memory usage', 'D) Eliminates bugs'],
+                        correct: 1,
+                        arabic: 'ما هي الميزة الرئيسية لاستخدام المخططات الانسيابية؟'
+                    },
+                    {
+                        question: 'Which symbol represents a collection of data?',
+                        options: ['A) Rectangle', 'B) Triangle', 'C) Inverted triangle', 'D) Circle'],
+                        correct: 2,
+                        arabic: 'أي رمز يمثل مجموعة من البيانات؟'
+                    },
+                    {
+                        question: 'What does proper flowchart documentation include?',
+                        options: ['A) Only symbols', 'B) Only text', 'C) Symbols with clear descriptions', 'D) Complex diagrams'],
+                        correct: 2,
+                        arabic: 'ماذا تتضمن الوثائق الصحيحة للمخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which is the first step in creating a flowchart?',
+                        options: ['A) Draw symbols', 'B) Define the problem', 'C) Add arrows', 'D) Choose colors'],
+                        correct: 1,
+                        arabic: 'ما هي الخطوة الأولى في إنشاء المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What makes a flowchart effective?',
+                        options: ['A) Many symbols', 'B) Complex paths', 'C) Clear and simple logic', 'D) Colorful design'],
+                        correct: 2,
+                        arabic: 'ما الذي يجعل المخطط الانسيابي فعالاً؟'
+                    },
+                    {
+                        question: 'Which tool is commonly used to create flowcharts?',
+                        options: ['A) Text editor', 'B) Spreadsheet', 'C) Diagramming software', 'D) Compiler'],
+                        correct: 2,
+                        arabic: 'أي أداة تُستخدم عادة لإنشاء المخططات الانسيابية؟'
+                    },
+                    {
+                        question: 'What does standard flowchart notation ensure?',
+                        options: ['A) Faster execution', 'B) Universal understanding', 'C) Smaller file size', 'D) Better colors'],
+                        correct: 1,
+                        arabic: 'ماذا يضمن التدوين القياسي للمخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'Which aspect is most important in flowchart design?',
+                        options: ['A) Artistic beauty', 'B) Logical flow', 'C) Number of symbols', 'D) Page layout'],
+                        correct: 1,
+                        arabic: 'أي جانب الأكثر أهمية في تصميم المخطط الانسيابي؟'
+                    },
+                    {
+                        question: 'What should each symbol in a flowchart contain?',
+                        options: ['A) Colors only', 'B) Numbers only', 'C) Meaningful text or description', 'D) Programming code'],
+                        correct: 2,
+                        arabic: 'ماذا يجب أن يحتوي كل رمز في المخطط الانسيابي؟'
+                    }
+                ]
+            },
+            'oop': {
+                title: 'Object-Oriented Programming (C++)',
+                questions: [
+                    {
+                        question: 'What does OOP stand for?',
+                        options: ['A) Object-Oriented Programming', 'B) Order of Processing', 'C) Operations on Programs', 'D) Original Object Processing'],
+                        correct: 0,
+                        arabic: 'ماذا يعني OOP؟'
+                    },
+                    {
+                        question: 'Which OOP concept refers to wrapping data and methods together?',
+                        options: ['A) Inheritance', 'B) Encapsulation', 'C) Polymorphism', 'D) Abstraction'],
+                        correct: 1,
+                        arabic: 'أي مفهوم OOP يشير إلى تجميع البيانات والطرق معاً؟'
+                    },
+                    {
+                        question: 'Which keyword is used to create an object in C++?',
+                        options: ['A) object', 'B) instance', 'C) new', 'D) No keyword, just declare the object'],
+                        correct: 3,
+                        arabic: 'أي كلمة مفتاحية تُستخدم لإنشاء كائن في C++؟'
+                    },
+                    {
+                        question: 'True or False: In C++, a class is a blueprint for objects.',
+                        options: ['A) True', 'B) False'],
+                        correct: 0,
+                        arabic: 'صح أم خطأ: في C++، الفئة هي مخطط للكائنات.'
+                    },
+                    {
+                        question: 'Which OOP concept allows a class to acquire properties of another class?',
+                        options: ['A) Polymorphism', 'B) Encapsulation', 'C) Inheritance', 'D) Abstraction'],
+                        correct: 2,
+                        arabic: 'أي مفهوم OOP يسمح للفئة بالحصول على خصائص فئة أخرى؟'
+                    },
+                    {
+                        question: 'Which access specifier allows members to be accessible only within the same class?',
+                        options: ['A) public', 'B) private', 'C) protected', 'D) default'],
+                        correct: 1,
+                        arabic: 'أي محدد وصول يسمح للأعضاء بأن تكون قابلة للوصول فقط داخل نفس الفئة؟'
+                    },
+                    {
+                        question: 'What is the default access specifier for members of a class in C++?',
+                        options: ['A) public', 'B) private', 'C) protected', 'D) internal'],
+                        correct: 1,
+                        arabic: 'ما هو محدد الوصول الافتراضي لأعضاء الفئة في C++؟'
+                    },
+                    {
+                        question: 'Which type of inheritance allows a class to inherit from more than one class?',
+                        options: ['A) Single Inheritance', 'B) Multiple Inheritance', 'C) Multilevel Inheritance', 'D) Hybrid Inheritance'],
+                        correct: 1,
+                        arabic: 'أي نوع من الوراثة يسمح للفئة بالوراثة من أكثر من فئة واحدة؟'
+                    },
+                    {
+                        question: 'True or False: Polymorphism means one function name can have multiple forms.',
+                        options: ['A) True', 'B) False'],
+                        correct: 0,
+                        arabic: 'صح أم خطأ: تعدد الأشكال يعني أن اسم دالة واحد يمكن أن يكون له أشكال متعددة.'
+                    },
+                    {
+                        question: 'Which OOP concept hides implementation details from the user?',
+                        options: ['A) Encapsulation', 'B) Inheritance', 'C) Abstraction', 'D) Polymorphism'],
+                        correct: 2,
+                        arabic: 'أي مفهوم OOP يخفي تفاصيل التنفيذ عن المستخدم؟'
+                    },
+                    {
+                        question: 'Which function in C++ is automatically called when an object is created?',
+                        options: ['A) Destructor', 'B) Constructor', 'C) Initializer', 'D) Allocator'],
+                        correct: 1,
+                        arabic: 'أي دالة في C++ تُستدعى تلقائياً عند إنشاء كائن؟'
+                    },
+                    {
+                        question: 'Which symbol is used for the scope resolution operator in C++?',
+                        options: ['A) :', 'B) ::', 'C) ->', 'D) .'],
+                        correct: 1,
+                        arabic: 'أي رمز يُستخدم لعامل دقة النطاق في C++؟'
+                    },
+                    {
+                        question: 'True or False: A class can have multiple constructors.',
+                        options: ['A) True', 'B) False'],
+                        correct: 0,
+                        arabic: 'صح أم خطأ: يمكن للفئة أن يكون لها عدة بنائيات.'
+                    },
+                    {
+                        question: 'Which keyword is used to define a class in C++?',
+                        options: ['A) struct', 'B) define', 'C) class', 'D) object'],
+                        correct: 2,
+                        arabic: 'أي كلمة مفتاحية تُستخدم لتعريف فئة في C++؟'
+                    },
+                    {
+                        question: 'Which member function is called automatically when an object is destroyed?',
+                        options: ['A) Constructor', 'B) Destructor', 'C) Finalizer', 'D) Cleaner'],
+                        correct: 1,
+                        arabic: 'أي دالة عضو تُستدعى تلقائياً عند تدمير كائن؟'
+                    },
+                    {
+                        question: 'In C++, what is the correct syntax for a destructor?',
+                        options: ['A) ~ClassName()', 'B) delete ClassName()', 'C) destroy ClassName()', 'D) ClassName::~()'],
+                        correct: 0,
+                        arabic: 'في C++، ما هو التركيب الصحيح للمدمر؟'
+                    },
+                    {
+                        question: 'Which inheritance type forms a chain where a class is derived from another derived class?',
+                        options: ['A) Multiple', 'B) Single', 'C) Multilevel', 'D) Hierarchical'],
+                        correct: 2,
+                        arabic: 'أي نوع وراثة يشكل سلسلة حيث تُشتق فئة من فئة مشتقة أخرى؟'
+                    },
+                    {
+                        question: 'Which keyword is used to prevent a method from being overridden?',
+                        options: ['A) lock', 'B) prevent', 'C) final', 'D) const'],
+                        correct: 2,
+                        arabic: 'أي كلمة مفتاحية تُستخدم لمنع طريقة من التجاوز؟'
+                    },
+                    {
+                        question: 'True or False: In C++, an abstract class must have at least one pure virtual function.',
+                        options: ['A) True', 'B) False'],
+                        correct: 0,
+                        arabic: 'صح أم خطأ: في C++، الفئة المجردة يجب أن تحتوي على دالة افتراضية نقية واحدة على الأقل.'
+                    },
+                    {
+                        question: 'Which symbol is used to access members of an object through a pointer?',
+                        options: ['A) .', 'B) ->', 'C) ::', 'D) *'],
+                        correct: 1,
+                        arabic: 'أي رمز يُستخدم للوصول لأعضاء الكائن من خلال مؤشر؟'
+                    },
+                    // Additional OOP Questions
+                    {
+                        question: 'What is a friend function in C++?',
+                        options: ['A) A function inside a class', 'B) A function that can access private members of a class', 'C) A virtual function', 'D) A static function'],
+                        correct: 1,
+                        arabic: 'ما هي الدالة الصديقة في C++؟'
+                    },
+                    {
+                        question: 'What can a friend class do?',
+                        options: ['A) Access only public members', 'B) Access private and protected members', 'C) Only inherit from the class', 'D) Nothing special'],
+                        correct: 1,
+                        arabic: 'ماذا يمكن للفئة الصديقة أن تفعل؟'
+                    },
+                    {
+                        question: 'Which keyword is used to declare a friend function?',
+                        options: ['A) friend', 'B) buddy', 'C) companion', 'D) associate'],
+                        correct: 0,
+                        arabic: 'أي كلمة مفتاحية تُستخدم لإعلان دالة صديقة؟'
+                    },
+                    {
+                        question: 'What is the main characteristic of a virtual function?',
+                        options: ['A) It cannot be overridden', 'B) It can be overridden in derived classes', 'C) It must be private', 'D) It has no parameters'],
+                        correct: 1,
+                        arabic: 'ما هي الخاصية الرئيسية للدالة الافتراضية؟'
+                    },
+                    {
+                        question: 'What is function overloading?',
+                        options: ['A) Having multiple functions with same name but different parameters', 'B) Having one function with multiple names', 'C) Calling a function multiple times', 'D) Creating functions with no parameters'],
+                        correct: 0,
+                        arabic: 'ما هو تحميل الدالة؟'
+                    },
+                    {
+                        question: 'Which operator can be overloaded in C++?',
+                        options: ['A) +', 'B) ::' , 'C) .', 'D) sizeof'],
+                        correct: 0,
+                        arabic: 'أي عامل يمكن تحميله في C++؟'
+                    },
+                    {
+                        question: 'What is the purpose of a copy constructor?',
+                        options: ['A) Delete objects', 'B) Create a copy of an object', 'C) Compare objects', 'D) Initialize empty objects'],
+                        correct: 1,
+                        arabic: 'ما هو الغرض من البناء الناسخ؟'
+                    },
+                    {
+                        question: 'When is a copy constructor called?',
+                        options: ['A) When deleting an object', 'B) When creating an object as a copy of another', 'C) When comparing objects', 'D) When changing object values'],
+                        correct: 1,
+                        arabic: 'متى يُستدعى البناء الناسخ؟'
+                    },
+                    {
+                        question: 'What is method overriding?',
+                        options: ['A) Creating new methods', 'B) Redefining a method in derived class', 'C) Deleting methods', 'D) Copying methods'],
+                        correct: 1,
+                        arabic: 'ما هو تجاوز الطريقة؟'
+                    },
+                    {
+                        question: 'Which access specifier allows access to derived classes but not to external classes?',
+                        options: ['A) public', 'B) private', 'C) protected', 'D) internal'],
+                        correct: 2,
+                        arabic: 'أي محدد وصول يسمح بالوصول للفئات المشتقة وليس للفئات الخارجية؟'
+                    },
+                    {
+                        question: 'What is a pure virtual function?',
+                        options: ['A) A function with no implementation in base class', 'B) A function that cannot be called', 'C) A private function', 'D) A static function'],
+                        correct: 0,
+                        arabic: 'ما هي الدالة الافتراضية النقية؟'
+                    },
+                    {
+                        question: 'How is a pure virtual function declared?',
+                        options: ['A) virtual func() = 0;', 'B) pure virtual func();', 'C) virtual func() = null;', 'D) abstract func();'],
+                        correct: 0,
+                        arabic: 'كيف تُعلن الدالة الافتراضية النقية؟'
+                    },
+                    {
+                        question: 'What is the diamond problem in multiple inheritance?',
+                        options: ['A) Memory allocation issue', 'B) Ambiguity when inheriting from classes with common base', 'C) Syntax error', 'D) Performance issue'],
+                        correct: 1,
+                        arabic: 'ما هي مشكلة الماس في الوراثة المتعددة؟'
+                    },
+                    {
+                        question: 'What does the virtual keyword do in inheritance?',
+                        options: ['A) Makes class abstract', 'B) Enables late binding', 'C) Makes members private', 'D) Creates multiple objects'],
+                        correct: 1,
+                        arabic: 'ماذا تفعل الكلمة المفتاحية virtual في الوراثة؟'
+                    },
+                    {
+                        question: 'What is composition in OOP?',
+                        options: ['A) Inheritance relationship', 'B) Has-a relationship between classes', 'C) Function overloading', 'D) Data hiding'],
+                        correct: 1,
+                        arabic: 'ما هو التركيب في OOP؟'
+                    },
+                    {
+                        question: 'What is aggregation in OOP?',
+                        options: ['A) Strong ownership relationship', 'B) Weak ownership relationship', 'C) Inheritance relationship', 'D) No relationship'],
+                        correct: 1,
+                        arabic: 'ما هو التجميع في OOP؟'
+                    },
+                    {
+                        question: 'What is a static member in C++?',
+                        options: ['A) Member that belongs to object', 'B) Member that belongs to class', 'C) Member that cannot change', 'D) Member that is private'],
+                        correct: 1,
+                        arabic: 'ما هو العضو الثابت في C++؟'
+                    },
+                    {
+                        question: 'How do you call a static member function?',
+                        options: ['A) object.function()', 'B) ClassName::function()', 'C) function(object)', 'D) static.function()'],
+                        correct: 1,
+                        arabic: 'كيف تستدعي دالة عضو ثابتة؟'
+                    },
+                    {
+                        question: 'What is the this pointer in C++?',
+                        options: ['A) Pointer to current object', 'B) Pointer to base class', 'C) Pointer to derived class', 'D) Pointer to static members'],
+                        correct: 0,
+                        arabic: 'ما هو مؤشر this في C++؟'
+                    },
+                    {
+                        question: 'What is method chaining?',
+                        options: ['A) Calling methods one by one', 'B) Returning *this to enable multiple method calls', 'C) Creating method dependencies', 'D) Copying methods'],
+                        correct: 1,
+                        arabic: 'ما هو تسلسل الطرق؟'
+                    },
+                    {
+                        question: 'What is const correctness?',
+                        options: ['A) Using const keyword properly', 'B) Making all variables const', 'C) Avoiding const keyword', 'D) Using const only in functions'],
+                        correct: 0,
+                        arabic: 'ما هي صحة const؟'
+                    },
+                    {
+                        question: 'What does a const member function guarantee?',
+                        options: ['A) It can modify object state', 'B) It cannot modify object state', 'C) It can only be called once', 'D) It must be virtual'],
+                        correct: 1,
+                        arabic: 'ماذا تضمن دالة العضو const؟'
+                    },
+                    {
+                        question: 'What is RAII in C++?',
+                        options: ['A) Resource Acquisition Is Initialization', 'B) Random Access Internal Implementation', 'C) Runtime Analysis and Integration', 'D) Rapid Application Interface Implementation'],
+                        correct: 0,
+                        arabic: 'ما هو RAII في C++؟'
+                    },
+                    {
+                        question: 'What is the Rule of Three in C++?',
+                        options: ['A) Three ways to create objects', 'B) If you define destructor, copy constructor, or assignment operator, define all three', 'C) Three types of inheritance', 'D) Three access specifiers'],
+                        correct: 1,
+                        arabic: 'ما هي قاعدة الثلاثة في C++؟'
+                    },
+                    {
+                        question: 'What is an interface in OOP?',
+                        options: ['A) A class with only pure virtual functions', 'B) A class with only public members', 'C) A class with no constructor', 'D) A class with static members only'],
+                        correct: 0,
+                        arabic: 'ما هي الواجهة في OOP؟'
+                    },
+                    {
+                        question: 'What is runtime polymorphism?',
+                        options: ['A) Function overloading', 'B) Virtual function mechanism', 'C) Template instantiation', 'D) Operator overloading'],
+                        correct: 1,
+                        arabic: 'ما هو تعدد الأشكال وقت التشغيل؟'
+                    },
+                    {
+                        question: 'What is compile-time polymorphism?',
+                        options: ['A) Virtual functions', 'B) Function overloading and templates', 'C) Runtime binding', 'D) Dynamic allocation'],
+                        correct: 1,
+                        arabic: 'ما هو تعدد الأشكال وقت الترجمة؟'
+                    },
+                    {
+                        question: 'What does the explicit keyword do in C++?',
+                        options: ['A) Makes constructor explicit', 'B) Prevents implicit conversions', 'C) Makes function virtual', 'D) Both A and B'],
+                        correct: 3,
+                        arabic: 'ماذا تفعل الكلمة المفتاحية explicit في C++؟'
+                    },
+                    {
+                        question: 'What is a template in C++?',
+                        options: ['A) A design pattern', 'B) Generic programming construct', 'C) Type of inheritance', 'D) Memory allocation method'],
+                        correct: 1,
+                        arabic: 'ما هو القالب في C++؟'
+                    },
+                    {
+                        question: 'What is std::vector in C++?',
+                        options: ['A) Static array', 'B) Dynamic array container', 'C) Linked list', 'D) Hash table'],
+                        correct: 1,
+                        arabic: 'ما هو std::vector في C++؟'
+                    },
+                    {
+                        question: 'What is the advantage of using std::vector over arrays?',
+                        options: ['A) Fixed size', 'B) Dynamic resizing and bounds checking', 'C) Faster access', 'D) Less memory usage'],
+                        correct: 1,
+                        arabic: 'ما هي ميزة استخدام std::vector على المصفوفات؟'
+                    },
+                    {
+                        question: 'What is a namespace in C++?',
+                        options: ['A) A way to group related code', 'B) A type of class', 'C) A memory allocation method', 'D) A design pattern'],
+                        correct: 0,
+                        arabic: 'ما هو مجال الأسماء في C++؟'
+                    },
+                    {
+                        question: 'What does std:: represent?',
+                        options: ['A) Static declaration', 'B) Standard namespace', 'C) String type', 'D) Structure definition'],
+                        correct: 1,
+                        arabic: 'ماذا يمثل std::؟'
+                    },
+                    {
+                        question: 'What is the difference between struct and class in C++?',
+                        options: ['A) No difference', 'B) struct members are public by default, class members are private', 'C) struct cannot have methods', 'D) struct cannot inherit'],
+                        correct: 1,
+                        arabic: 'ما الفرق بين struct و class في C++؟'
+                    },
+                    {
+                        question: 'What is a vtable (virtual table)?',
+                        options: ['A) Table of virtual functions', 'B) Memory allocation table', 'C) Symbol table', 'D) Hash table'],
+                        correct: 0,
+                        arabic: 'ما هي vtable (جدول الدوال الافتراضية)؟'
+                    },
+                    {
+                        question: 'What is multiple inheritance?',
+                        options: ['A) One class inheriting from multiple classes', 'B) Multiple classes inheriting from one class', 'C) Multiple levels of inheritance', 'D) Multiple objects of same class'],
+                        correct: 0,
+                        arabic: 'ما هي الوراثة المتعددة؟'
+                    },
+                    {
+                        question: 'What is a base class?',
+                        options: ['A) The first class created', 'B) Class that is inherited from', 'C) Class with no members', 'D) Class with only static members'],
+                        correct: 1,
+                        arabic: 'ما هي الفئة الأساسية؟'
+                    },
+                    {
+                        question: 'What is a derived class?',
+                        options: ['A) Class that inherits from another class', 'B) Class that cannot inherit', 'C) Abstract class', 'D) Template class'],
+                        correct: 0,
+                        arabic: 'ما هي الفئة المشتقة؟'
+                    }
+                ]
+            }
+        };
+
+        // Final Exam Questions (Mix from all sections)
+        const finalExamQuestions = [
+            // C Programming
+            quizData['c-programming'].questions[0],
+            quizData['c-programming'].questions[4],
+            quizData['c-programming'].questions[8],
+            quizData['c-programming'].questions[12],
+            quizData['c-programming'].questions[16],
+
+            // Pseudocode
+            quizData['pseudocode'].questions[0],
+            quizData['pseudocode'].questions[4],
+            quizData['pseudocode'].questions[8],
+            quizData['pseudocode'].questions[12],
+            quizData['pseudocode'].questions[16],
+
+            // SQL
+            quizData['sql'].questions[1],
+            quizData['sql'].questions[3],
+            quizData['sql'].questions[7],
+            quizData['sql'].questions[11],
+            quizData['sql'].questions[15],
+
+            // Algorithms
+            quizData['algorithms'].questions[0],
+            quizData['algorithms'].questions[4],
+            quizData['algorithms'].questions[8],
+            quizData['algorithms'].questions[12],
+            quizData['algorithms'].questions[16],
+
+            // Flowchart
+            quizData['flowchart'].questions[0],
+            quizData['flowchart'].questions[2],
+            quizData['flowchart'].questions[4],
+            quizData['flowchart'].questions[6],
+            quizData['flowchart'].questions[8],
+
+            // OOP
+            quizData['oop'].questions[0],
+            quizData['oop'].questions[4],
+            quizData['oop'].questions[8],
+            quizData['oop'].questions[12],
+            quizData['oop'].questions[16],
+            quizData['oop'].questions[20],
+            quizData['oop'].questions[24],
+            quizData['oop'].questions[28],
+            quizData['oop'].questions[32],
+            quizData['oop'].questions[36]
+        ];
+
+        // Global Variables
+        let currentSection = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answers = [];
+        let timer;
+        let timeLeft = 1800; // 30 minutes in seconds
+        let isTranslated = {};
+
+        // Navigation Functions
+        function goHome() {
+            document.getElementById('home-page').style.display = 'block';
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'none';
+            document.querySelector('.home-icon').style.display = 'none';
+            if (timer) clearInterval(timer);
+        }
+
+        function startSection(section) {
+            currentSection = section;
+            currentQuestions = [...quizData[section].questions];
+            startQuiz(false);
+        }
+
+        function startFinalExam() {
+            currentSection = 'final-exam';
+            currentQuestions = [...finalExamQuestions];
+            startQuiz(true);
+        }
+
+        function startQuiz(isFinal) {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            answers = [];
+            isTranslated = {};
+
+            // Show quiz container
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('results-container').style.display = 'none';
+            document.querySelector('.home-icon').style.display = 'block';
+
+            // Set title and total questions
+            const title = isFinal ? 'Final Comprehensive Exam' : quizData[currentSection].title;
+            document.getElementById('quiz-title').textContent = title;
+            document.getElementById('total-questions').textContent = currentQuestions.length;
+
+            // Start timer for final exam
+            if (isFinal) {
+                timeLeft = 1800; // 30 minutes
+                document.getElementById('timer').style.display = 'block';
+                startTimer();
+            } else {
+                document.getElementById('timer').style.display = 'none';
+            }
+
+            displayQuestion();
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('time-left').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function displayQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            const container = document.getElementById('question-container');
+
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('current-score').textContent = score;
+
+            // Create question HTML
+            let questionHTML = `
+                <div class="question-card fade-in">
+                    <div class="question-number">${currentQuestionIndex + 1}</div>
+                    <div class="question-text">
+                        <span id="question-text-${currentQuestionIndex}">${question.question}</span>
+                        <button class="translate-btn" onclick="toggleTranslation(${currentQuestionIndex})">
+                            <i class="fas fa-language" title="Translate to Arabic"></i>
+                        </button>
+                    </div>`;
+
+            // Add code block if exists
+            if (question.code) {
+                questionHTML += `<div class="code-block">${question.code}</div>`;
+            }
+
+            // Add options
+            question.options.forEach((option, index) => {
+                const isSelected = answers[currentQuestionIndex] === index;
+                questionHTML += `
+                    <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption(${index})">
+                        <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                        <span>${option}</span>
+                    </div>`;
+            });
+
+            questionHTML += '</div>';
+            container.innerHTML = questionHTML;
+
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').textContent = 
+                currentQuestionIndex === currentQuestions.length - 1 ? 'Finish' : 'Next';
+        }
+
+        function toggleTranslation(questionIndex) {
+            const question = currentQuestions[questionIndex];
+            const textElement = document.getElementById(`question-text-${questionIndex}`);
+            
+            if (!isTranslated[questionIndex]) {
+                textElement.textContent = question.arabic || question.question;
+                isTranslated[questionIndex] = true;
+            } else {
+                textElement.textContent = question.question;
+                isTranslated[questionIndex] = false;
+            }
+        }
+
+        function selectOption(optionIndex) {
+            answers[currentQuestionIndex] = optionIndex;
+            
+            // Update visual selection
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                option.classList.toggle('selected', index === optionIndex);
+            });
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            if (timer) clearInterval(timer);
+
+            // Calculate results
+            let correctAnswers = 0;
+            const results = [];
+
+            currentQuestions.forEach((question, index) => {
+                const userAnswer = answers[index];
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) correctAnswers++;
+
+                results.push({
+                    question: question.question,
+                    userAnswer: userAnswer !== undefined ? question.options[userAnswer] : 'Not answered',
+                    correctAnswer: question.options[question.correct],
+                    isCorrect: isCorrect
+                });
+            });
+
+            score = correctAnswers;
+            showResults(results);
+        }
+
+        function showResults(results) {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'block';
+
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            const passed = percentage >= 60;
+
+            // Final score display
+            document.getElementById('final-score').innerHTML = `
+                <div class="d-flex justify-content-around align-items-center">
+                    <div>
+                        <div style="font-size: 3rem; font-weight: bold;">${score}/${currentQuestions.length}</div>
+                        <div>Correct Answers</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 3rem; font-weight: bold; color: ${passed ? '#27ae60' : '#e74c3c'}">${percentage}%</div>
+                        <div>${passed ? 'PASSED' : 'FAILED'}</div>
+                    </div>
+                </div>
+            `;
+
+            // Detailed results
+            let detailsHTML = `
+                <div class="section-card">
+                    <h3>Detailed Results</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+            `;
+
+            results.forEach((result, index) => {
+                const iconClass = result.isCorrect ? 'fa-check-circle text-success' : 'fa-times-circle text-danger';
+                detailsHTML += `
+                    <div class="mb-3 p-3 border-start ${result.isCorrect ? 'border-success' : 'border-danger'} border-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas ${iconClass} me-2"></i>
+                            <strong>Question ${index + 1}</strong>
+                        </div>
+                        <div class="mb-2"><strong>Q:</strong> ${result.question}</div>
+                        <div class="mb-1"><strong>Your Answer:</strong> ${result.userAnswer}</div>
+                        <div><strong>Correct Answer:</strong> ${result.correctAnswer}</div>
+                    </div>
+                `;
+            });
+
+            detailsHTML += '</div></div>';
+            document.getElementById('results-details').innerHTML = detailsHTML;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show home page by default
+            goHome();
+        });
+    </script>
+</body>
+</html>
